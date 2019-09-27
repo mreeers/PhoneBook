@@ -1,0 +1,59 @@
+﻿@using Domain.Models
+@model IEnumerable<Person>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@foreach (Person m in Model)
+{
+    <p>@m.SecondName</p>
+}
+
+
+
+
+
+<h1>Index</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Должность
+            </th>
+            <th>
+                ФИО
+            </th>
+            <th>
+                Телефон
+            </th>
+            <th>
+                Отдел
+            </th>
+        </tr>
+        </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Department.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone.PhoneNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Position.Title)
+                </td>
+                @*<td>
+                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                </td>*@
+            </tr>
+        }
+    </tbody>
+    </table>
