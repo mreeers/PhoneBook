@@ -42,6 +42,7 @@ namespace Domain.Models
                     SecondName = "Конев",
                     MiddleName = "Владимирович",
                     Email = "test@test.ru",
+                    
                 });
 
                 context.SaveChanges();

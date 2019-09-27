@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using Domain.Models;
+using System.Threading.Tasks;
 
 namespace PhoneBookMVC.Controllers
 {
@@ -25,6 +26,26 @@ namespace PhoneBookMVC.Controllers
                 .ToList();
 
             return View(people);
+        }
+
+        //GET: /Create
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        //POST: Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create(Person person)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(person);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(person);
         }
 
 

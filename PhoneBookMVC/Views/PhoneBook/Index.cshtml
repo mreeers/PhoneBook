@@ -5,17 +5,8 @@
     ViewData["Title"] = "Index";
 }
 
-@foreach (Person m in Model)
-{
-    <p>@m.SecondName</p>
-}
-
-
-
-
-
 <h1>Index</h1>
-<table class="table">
+<table class="table table-bordered table-hover">
     <thead>
         <tr>
             <th>
@@ -27,17 +18,20 @@
             <th>
                 Телефон
             </th>
-            <th>
-                Отдел
-            </th>
         </tr>
+    </thead>
+
+    @foreach (var item in Model)
+    {
+        <thead class="thead-light text-center">
+            <tr>
+                <th colspan="3">@Html.DisplayFor(modelItem => item.Department.Title)</th>
+            </tr>
         </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+        <tbody>
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Department.Title)
+                    @Html.DisplayFor(modelItem => item.Position.Title)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.FullName)
@@ -45,15 +39,8 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Phone.PhoneNumber)
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Position.Title)
-                </td>
-                @*<td>
-                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-                </td>*@
             </tr>
-        }
-    </tbody>
-    </table>
+
+        </tbody>
+    }
+</table>

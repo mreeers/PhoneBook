@@ -53,7 +53,7 @@ namespace PhoneBookMVC
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=PhoneBook}/{action=Index}/{id?}");
             });
         }
     }
