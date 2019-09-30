@@ -1,11 +1,11 @@
 ﻿@using Domain.Models
-@model IEnumerable<Person>
+@model IEnumerable<PeopleInTheDepartment>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h3>Телефонный справочник</h3>
 <table class="table table-bordered table-hover">
     <thead>
         <tr>
@@ -20,6 +20,7 @@
             </th>
         </tr>
     </thead>
+    
 
     @foreach (var item in Model)
     {
@@ -29,18 +30,21 @@
             </tr>
         </thead>
         <tbody>
+            @foreach (var person in item.People)
+            {
+
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Position.Title)
+                    @Html.DisplayFor(modelItem => person.Position.Title)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FullName)
+                    @Html.DisplayFor(modelItem => person.FullName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Phone.PhoneNumber)
+                    @Html.DisplayFor(modelItem => person.Phone.PhoneNumber)
                 </td>
             </tr>
-
+            }
         </tbody>
     }
 </table>

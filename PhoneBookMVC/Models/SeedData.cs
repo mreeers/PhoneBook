@@ -43,10 +43,7 @@ namespace Domain.Models
                     SecondName = "Конев",
                     MiddleName = "Владимирович",
                     Email = "test@test.ru",
-                    DepartmentId = 1,
-                    PhoneId = 1,
-                    PositionId = 1
-                });
+                }) ;
                 context.SaveChanges();
             }
         }

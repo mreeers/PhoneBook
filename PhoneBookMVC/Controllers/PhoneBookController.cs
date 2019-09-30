@@ -22,11 +22,28 @@ namespace PhoneBookMVC.Controllers
             IEnumerable<Person> people = _context.People
                 .Include(p => p.Department)
                 .Include(p => p.Phone)
-                .Include(p => p.Position)
-                .ToList();
+                .Include(p => p.Position);
 
-            return View(people);
+
+            //people = people.OrderBy(s => s.Department.Title);
+            //return View(people);
+
+            var departmens = _context.Departments.ToList();
+            List<PeopleInTheDepartment> peopleInTheDepartments = new List<PeopleInTheDepartment>();
+            foreach (var n in departmens)
+            {
+
+                PeopleInTheDepartment departmentWhichPeople = new PeopleInTheDepartment();
+                departmentWhichPeople.DepartmentId = n.Id;
+                departmentWhichPeople.Department = n;
+                departmentWhichPeople.People = people.Where(p => p.DepartmentId == n.Id).ToList();
+                peopleInTheDepartments.Add(departmentWhichPeople);
+            }
+
+
+            return View(peopleInTheDepartments);
         }
+
 
         //GET: /Create
         public IActionResult Create()

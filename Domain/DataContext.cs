@@ -17,6 +17,7 @@ namespace Domain
         public DbSet<Phone> Phones { get; set; }
         public DbSet<Position> Positions { get; set; }
         public DbSet<Department> Departments { get; set; }
+        
 
     }
 
