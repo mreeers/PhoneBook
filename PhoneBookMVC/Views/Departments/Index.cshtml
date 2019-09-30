@@ -1,0 +1,52 @@
+﻿@using Domain.Models
+@model IEnumerable<Department>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h3>Список отделов</h3>
+<p>
+    <a asp-action="Create">Создать новый</a>
+</p>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>
+                №
+            </th>
+            <th>
+                Наименование
+            </th>
+            <th>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a asp-page="/Details">
+                        <i class="fas fa-info-circle"></i>
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@item.Id">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+
