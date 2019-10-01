@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
@@ -16,6 +17,7 @@ namespace Domain.Models
         public string Title { get; set; }
 
         [Required]
+        [DefaultValue("2")]
         public int Level { get; set; }
 
         public override string ToString()

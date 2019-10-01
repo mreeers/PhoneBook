@@ -6,6 +6,16 @@
 }
 
 <h3>Телефонный справочник</h3>
+<p>
+    <a asp-action="Create">Создать</a>
+</p>
+<form asp-controller="PhoneBook" asp-action="Index">
+    <p>
+        Фамилия: <input type="text" name="SearchString">
+        <input type="submit" value="Найти" />
+    </p>
+</form>
+
 <table class="table table-bordered table-hover">
     <thead>
         <tr>
