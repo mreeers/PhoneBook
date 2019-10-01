@@ -5,19 +5,23 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using Domain.Models;
 using System.Threading.Tasks;
+using Domain.Repository;
 
 namespace PhoneBookMVC.Controllers
 {
     public class DepartmentsController : Controller
     {
         private readonly DataContext _context;
-        public DepartmentsController(DataContext context)
+        private readonly IDepartmentRepository _departmentRepository;
+
+        public DepartmentsController(DataContext context, IDepartmentRepository departmentRepository)
         {
             _context = context;
+            _departmentRepository = departmentRepository;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
-            IEnumerable<Department> departments = _context.Departments;
+            IEnumerable<Department> departments = await _departmentRepository.GetDepartments();
             return View(departments);
         }
 
@@ -38,7 +42,7 @@ namespace PhoneBookMVC.Controllers
             {
                 _context.Add(department);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(IndexAsync));
             }
             return View(department);
         }
@@ -69,7 +73,7 @@ namespace PhoneBookMVC.Controllers
             var departments = await _context.Departments.FindAsync(id);
             _context.Departments.Remove(departments);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(IndexAsync));
         }
 
         // GET: /Edit/id
@@ -117,7 +121,7 @@ namespace PhoneBookMVC.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(IndexAsync));
             }
             return View(department);
         }

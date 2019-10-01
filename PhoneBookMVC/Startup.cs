@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using AutoMapper;
+using Domain.Repository;
 
 namespace PhoneBookMVC
 {
@@ -30,6 +31,8 @@ namespace PhoneBookMVC
             });
 
             services.AddDbContext<DataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("PhoneBook")));
+            services.AddScoped<IPersonRepository, PersonRepository>();
+            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddAutoMapper(typeof(Startup));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

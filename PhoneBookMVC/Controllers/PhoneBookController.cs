@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using PhoneBookMVC.ViewModel;
 using System.Collections;
 using AutoMapper;
+using Domain.Repository;
 
 namespace PhoneBookMVC.Controllers
 {
@@ -17,21 +18,22 @@ namespace PhoneBookMVC.Controllers
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
+        private readonly IPersonRepository _personRepository;
+        private readonly IDepartmentRepository _departmentRepository;
 
-        public PhoneBookController(DataContext context, IMapper mapper)
+        public PhoneBookController(DataContext context, IMapper mapper, IPersonRepository personRepository, IDepartmentRepository departmentRepository)
         {
             _context = context;
             _mapper = mapper;
+            _personRepository = personRepository;
+            _departmentRepository = departmentRepository;
         }
 
-        public IActionResult Index(string searchString)
+        public async Task<IActionResult> Index(string searchString)
         {
-            IEnumerable<Person> people = _context.People
-                 .Include(p => p.Department)
-                 .Include(p => p.Phone)
-                 .Include(p => p.Position);
+            IEnumerable<Person> people = await _personRepository.GetPersons();
 
-            var departmens = _context.Departments.ToList();
+            var departmens = await _departmentRepository.GetDepartments();
 
             var searchPeople = from m in _context.People select m;
 
@@ -60,9 +62,9 @@ namespace PhoneBookMVC.Controllers
 
 
         //GET: /Create
-        public IActionResult Create()
+        public async Task<IActionResult> CreateAsync()
         {
-            var departmens = _context.Departments.ToList();
+            var departmens = await _departmentRepository.GetDepartments();
             ViewBag.Departments = new SelectList(departmens, "Id", "Title");
             var positions = _context.Positions.ToList();
             ViewBag.Positions = new SelectList(positions, "Id", "Title");
