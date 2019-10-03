@@ -5,23 +5,26 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using Domain.Models;
 using System.Threading.Tasks;
-using Domain.Repository;
+using Business_Layer.InterfaseRepository;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PhoneBookMVC.Controllers
 {
     public class DepartmentsController : Controller
     {
         private readonly DataContext _context;
-        private readonly IDepartmentRepository _departmentRepository;
+        private readonly IActionRepository<Department> _departmentRepository;
 
-        public DepartmentsController(DataContext context, IDepartmentRepository departmentRepository)
+        public DepartmentsController(DataContext context, IActionRepository<Department> departmentRepository)
         {
             _context = context;
             _departmentRepository = departmentRepository;
         }
-        public async Task<IActionResult> IndexAsync()
+
+        
+        public async Task<IActionResult> Index()
         {
-            IEnumerable<Department> departments = await _departmentRepository.GetDepartments();
+            IEnumerable<Department> departments = await _departmentRepository.GetOAll();
             return View(departments);
         }
 
@@ -35,14 +38,13 @@ namespace PhoneBookMVC.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Level")] Department department)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(department);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(IndexAsync));
+                return RedirectToAction(nameof(Index));
             }
             return View(department);
         }
@@ -73,7 +75,7 @@ namespace PhoneBookMVC.Controllers
             var departments = await _context.Departments.FindAsync(id);
             _context.Departments.Remove(departments);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(IndexAsync));
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: /Edit/id
@@ -121,7 +123,7 @@ namespace PhoneBookMVC.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(IndexAsync));
+                return RedirectToAction(nameof(Index));
             }
             return View(department);
         }

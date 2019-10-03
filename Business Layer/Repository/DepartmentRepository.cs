@@ -1,13 +1,15 @@
-﻿using System;
+﻿using Domain.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using Business_Layer.InterfaseRepository;
 using System.Threading.Tasks;
-using Domain.Models;
+using Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Domain.Repository
+namespace Business_Layer.Repository
 {
-    public class DepartmentRepository : IDepartmentRepository
+    public class DepartmentRepository : IActionRepository<Department>
     {
         private readonly DataContext _context;
         public DepartmentRepository(DataContext context)
@@ -15,13 +17,18 @@ namespace Domain.Repository
             _context = context;
         }
 
-        public async Task<Department> GetDepartment(int id)
+        public Task<Department> Find(int? id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Department> Get(int id)
         {
             var department = await _context.Departments.SingleOrDefaultAsync(p => p.Id == id);
             return department;
         }
 
-        public async Task<IEnumerable<Department>> GetDepartments()
+        public async Task<IEnumerable<Department>> GetOAll()
         {
             var departments = await _context.Departments.ToListAsync();
             return departments;

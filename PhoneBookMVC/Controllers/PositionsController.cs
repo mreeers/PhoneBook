@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Business_Layer.InterfaseRepository;
 using Domain;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -11,14 +12,17 @@ namespace PhoneBookMVC.Controllers
     public class PositionsController : Controller
     {
         private readonly DataContext _context;
-        public PositionsController(DataContext context)
+        private readonly IActionRepository<Position> _positionRepository;
+
+        public PositionsController(DataContext context, IActionRepository<Position> positionRepository)
         {
             _context = context;
+            _positionRepository = positionRepository;
         }
 
-        public IActionResult Index()
-        {
-            IEnumerable<Position> positions = _context.Positions;
+        public async Task<IActionResult> Index()
+        {   
+            IEnumerable<Position> positions = await _positionRepository.GetOAll();
             return View(positions);
         }
 

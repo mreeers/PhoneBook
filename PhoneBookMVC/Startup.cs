@@ -7,7 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using AutoMapper;
-using Domain.Repository;
+using Domain.Models;
+using Business_Layer.Repository;
+using Business_Layer.InterfaseRepository;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace PhoneBookMVC
 {
@@ -31,9 +34,17 @@ namespace PhoneBookMVC
             });
 
             services.AddDbContext<DataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("PhoneBook")));
-            services.AddScoped<IPersonRepository, PersonRepository>();
-            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            services.AddScoped<IActionRepository<Person>, PersonRepository>();
+            services.AddScoped<IActionRepository<Department>, DepartmentRepository>();
+            services.AddScoped<IActionRepository<Position>, PositionRepository>();
             services.AddAutoMapper(typeof(Startup));
+            
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options => //CookieAuthenticationOptions
+                {
+                    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Admin/Login");
+                });
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -51,6 +62,7 @@ namespace PhoneBookMVC
 
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

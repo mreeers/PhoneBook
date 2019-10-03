@@ -13,39 +13,13 @@ namespace Domain.Models
             using (var context = new DataContext(serviceProvider.GetRequiredService<DbContextOptions<DataContext>>()))
             {
 
-                if (context.People.Any() || context.Phones.Any() || context.Departments.Any() || context.Phones.Any())
+                if (context.UserAdmins.Any())
                 {
                     return;
                 }
-                
-
-                context.Departments.AddRange(new Department
-                {
-                    Title = "Администрация",
-                    Level = 1,
-                });
-
-                context.Positions.AddRange(new Position
-                {
-                    Title = "Директор учреждения",
-                    Level = 1
-                }); ;
-
-                context.Phones.AddRange(new Phone
-                {
-                    PhoneNumber = "52-29-01"
-                });
-
-                context.People.AddRange(new Person
-                {
-                    FirstName = "Даниил",
-                    SecondName = "Конев",
-                    MiddleName = "Владимирович",
-                    Email = "test@test.ru",
-                   
-                });
-
+                context.UserAdmins.AddRange(new Models.Admin { UserName = "admin", Password= "admin" });
                 context.SaveChanges();
+
             }
         }
 

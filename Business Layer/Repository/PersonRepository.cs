@@ -1,13 +1,15 @@
-﻿using System;
+﻿using Business_Layer.InterfaseRepository;
+using Domain;
+using Domain.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Domain.Models;
-using Microsoft.EntityFrameworkCore;
 
-namespace Domain.Repository
+namespace Business_Layer.Repository
 {
-    public class PersonRepository : IPersonRepository
+    public class PersonRepository : IActionRepository<Person>
     {
         private readonly DataContext _context;
         public PersonRepository(DataContext context)
@@ -15,14 +17,20 @@ namespace Domain.Repository
             _context = context;
         }
 
-        public async Task<Person> GetPerson(int id)
+        public async Task<Person> Find(int? id)
+        {
+            var person = await _context.People.FindAsync(id);
+            return person;
+        }
+
+        public async Task<Person> Get(int id)
         {
             var person = await _context.People.SingleOrDefaultAsync(p => p.Id == id);
             return person;
         }
 
-        public async Task<IEnumerable<Person>> GetPersons()
-        {               
+        public async Task<IEnumerable<Person>> GetOAll()
+        {
             var people = await _context.People
                 .Include(p => p.Department)
                 .Include(p => p.Phone)

@@ -52,6 +52,20 @@ namespace Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserAdmins",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserName = table.Column<string>(nullable: true),
+                    Password = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAdmins", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "People",
                 columns: table => new
                 {
@@ -108,6 +122,9 @@ namespace Domain.Migrations
         {
             migrationBuilder.DropTable(
                 name: "People");
+
+            migrationBuilder.DropTable(
+                name: "UserAdmins");
 
             migrationBuilder.DropTable(
                 name: "Departments");

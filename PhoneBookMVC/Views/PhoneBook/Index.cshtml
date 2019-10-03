@@ -48,7 +48,7 @@
                     @Html.DisplayFor(modelItem => person.Position.Title)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => person.FullName)
+                    <a asp-action="Edit" asp-route-id="@person.Id">@Html.DisplayFor(modelItem => person.FullName)</a> 
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => person.Phone.PhoneNumber)

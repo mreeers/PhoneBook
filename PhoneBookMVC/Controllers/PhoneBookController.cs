@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using PhoneBookMVC.ViewModel;
 using System.Collections;
 using AutoMapper;
-using Domain.Repository;
+using Business_Layer.InterfaseRepository;
 
 namespace PhoneBookMVC.Controllers
 {
@@ -18,10 +18,10 @@ namespace PhoneBookMVC.Controllers
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        private readonly IPersonRepository _personRepository;
-        private readonly IDepartmentRepository _departmentRepository;
+        private readonly IActionRepository<Person> _personRepository;
+        private readonly IActionRepository<Department> _departmentRepository;
 
-        public PhoneBookController(DataContext context, IMapper mapper, IPersonRepository personRepository, IDepartmentRepository departmentRepository)
+        public PhoneBookController(DataContext context, IMapper mapper, IActionRepository<Person> personRepository, IActionRepository<Department> departmentRepository)
         {
             _context = context;
             _mapper = mapper;
@@ -31,9 +31,9 @@ namespace PhoneBookMVC.Controllers
 
         public async Task<IActionResult> Index(string searchString)
         {
-            IEnumerable<Person> people = await _personRepository.GetPersons();
+            IEnumerable<Person> people = await _personRepository.GetOAll();
 
-            var departmens = await _departmentRepository.GetDepartments();
+            var departmens = await _departmentRepository.GetOAll();
 
             var searchPeople = from m in _context.People select m;
 
@@ -62,13 +62,12 @@ namespace PhoneBookMVC.Controllers
 
 
         //GET: /Create
-        public async Task<IActionResult> CreateAsync()
+        public async Task<IActionResult> Create()
         {
-            var departmens = await _departmentRepository.GetDepartments();
+            var departmens = await _departmentRepository.GetOAll();
             ViewBag.Departments = new SelectList(departmens, "Id", "Title");
             var positions = _context.Positions.ToList();
             ViewBag.Positions = new SelectList(positions, "Id", "Title");
-            
             return View();
         }
 
@@ -85,25 +84,12 @@ namespace PhoneBookMVC.Controllers
                 {
                     PhoneNumber = personForCreateDto.phoneNumber
                 };
-            
-                //phone.PhoneNumber = personForCreateDto.phoneNumber;
+
                 await _context.Phones.AddAsync(phone);
                 await _context.SaveChangesAsync();
             }
             person.PhoneId = phone.Id;
 
-            /*if(phone != null)
-            {
-                person.PhoneId = phone.Id;
-            }
-            else
-            {
-                phone.PhoneNumber = personForCreateDto.phoneNumber;
-                await _context.Phones.AddAsync(phone);
-                await _context.SaveChangesAsync();
-                person.PhoneId = phone.Id;
-
-            }*/
 
             if (ModelState.IsValid)
             {
@@ -114,5 +100,83 @@ namespace PhoneBookMVC.Controllers
             return View(person);
 
         }
+
+        /////
+        ///
+        // GET: People/Edit/5
+        public async Task<IActionResult> Edit(int id)
+        {
+
+            var departmens = await _departmentRepository.GetOAll();
+            ViewBag.Departments = new SelectList(departmens, "Id", "Title");
+            var positions = _context.Positions.ToList();
+            ViewBag.Positions = new SelectList(positions, "Id", "Title");
+            
+            var person = await _context.People.FindAsync(id);
+            
+            if (person == null)
+            {
+                return NotFound();
+            }
+            var personForUpdate =  _mapper.Map<PersonForUpdateDto>(person);
+            
+            return View(personForUpdate);
+        }
+
+        //// POST: People/Edit/5
+        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //public async Task<IActionResult> Edit(int id, PersonForUpdateDto personForUpdateDto)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest("Некоректные данные");
+        //    }
+        //    var person = _mapper.Map<Person>(personForUpdateDto);
+
+        //    var phone = await _context.Phones.SingleOrDefaultAsync(p => p.Id == personForUpdateDto.Id);
+        //    if(phone == null)
+        //    {
+        //        phone = new Phone
+        //        {
+        //            PhoneNumber = personForUpdateDto.phoneNumber
+        //        };
+        //        await _context.Phones.AddAsync(phone);
+        //        person.PhoneId = phone.Id;
+        //    }
+        //    if (id != person.Id)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _context.Update(person);
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!PersonExists(person.Id))
+        //            {
+        //                return NotFound();
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View(person);
+        //}
+
+        //private bool PersonExists(int id)
+        //    {
+        //        return _context.People.Any(e => e.Id == id);
+        //    }
+
     }
-}
+    }
