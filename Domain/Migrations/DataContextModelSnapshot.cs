@@ -31,7 +31,7 @@ namespace Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserAdmins");
+                    b.ToTable("Admin");
                 });
 
             modelBuilder.Entity("Domain.Models.Department", b =>

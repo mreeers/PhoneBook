@@ -42,7 +42,7 @@ namespace PhoneBookMVC
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => //CookieAuthenticationOptions
                 {
-                    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Admin/Login");
+                    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Edit/Login");
                 });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -62,6 +62,7 @@ namespace PhoneBookMVC
 
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseHttpsRedirection();
             app.UseAuthentication();
 
             app.UseMvc(routes =>

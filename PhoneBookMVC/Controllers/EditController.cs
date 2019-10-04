@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Domain;
+﻿using Domain;
 using Domain.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PhoneBookMVC.ViewModel;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace PhoneBookMVC.Controllers
 {
-    public class AdminsController : Controller
+    public class EditController : Controller
     {
         private readonly DataContext _context;
-        public AdminsController(DataContext context)
+
+        public EditController(DataContext context)
         {
             _context = context;
         }
@@ -27,19 +27,19 @@ namespace PhoneBookMVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(Admin userAdmin)
+        public async Task<IActionResult> Login(LoginModel model)
         {
             if (ModelState.IsValid)
             {
-                Admin admin = await _context.UserAdmins.FirstOrDefaultAsync(p => p.UserName == userAdmin.UserName && p.Password == userAdmin.Password);
-                if(admin != null)
+                Admin user = await _context.Admins.FirstOrDefaultAsync(u => u.UserName == model.UserName && u.Password == model.Password);
+                if (user != null)
                 {
-                    await Authenticate(userAdmin.UserName);
+                    await Authenticate(model.UserName); // аутентификация
                     return RedirectToAction("Index");
                 }
                 ModelState.AddModelError("", "Некорректные логин и(или) пароль");
             }
-            return View(userAdmin);
+            return View(model);
         }
 
         private async Task Authenticate(string userName)

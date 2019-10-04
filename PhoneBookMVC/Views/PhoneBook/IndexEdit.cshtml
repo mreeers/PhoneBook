@@ -1,0 +1,72 @@
+﻿@using Domain.Models
+@model IEnumerable<PeopleInTheDepartment>
+@{
+    ViewData["Title"] = "IndexEdit";
+}
+
+    <h3>Режим редактирования</h3>
+
+<div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+    <ul class="navbar-nav flex-grow-1">
+        <li>
+            <a class="nav-link text-dark" asp-area="" asp-controller="Positions" asp-action="Index">Редактировать должности</a>
+        </li>
+        <li>
+            <a class="nav-link text-dark" asp-area="" asp-controller="Departments" asp-action="Index">Редактировать отделы</a>
+        </li>
+    </ul>
+</div>
+
+<h3>Телефонный справочник</h3>
+<p>
+    <a asp-action="Create">Создать</a>
+</p>
+<form asp-controller="PhoneBook" asp-action="Index">
+    <p>
+        Фамилия: <input type="text" name="SearchString">
+        <input type="submit" value="Найти" />
+    </p>
+</form>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>
+                Должность
+            </th>
+            <th>
+                ФИО
+            </th>
+            <th>
+                Телефон
+            </th>
+        </tr>
+    </thead>
+
+
+    @foreach (var item in Model)
+    {
+        <thead class="thead-light text-center">
+            <tr>
+                <th colspan="3">@Html.DisplayFor(modelItem => item.Department.Title)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var person in item.People)
+            {
+
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => person.Position.Title)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@person.Id">@Html.DisplayFor(modelItem => person.FullName)</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => person.Phone.PhoneNumber)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
+</table>

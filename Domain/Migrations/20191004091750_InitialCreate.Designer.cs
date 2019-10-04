@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Domain.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20191003070726_InitialCreate")]
+    [Migration("20191004091750_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,7 +33,7 @@ namespace Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserAdmins");
+                    b.ToTable("Admin");
                 });
 
             modelBuilder.Entity("Domain.Models.Department", b =>

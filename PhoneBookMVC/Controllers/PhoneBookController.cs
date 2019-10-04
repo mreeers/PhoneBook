@@ -11,6 +11,7 @@ using PhoneBookMVC.ViewModel;
 using System.Collections;
 using AutoMapper;
 using Business_Layer.InterfaseRepository;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PhoneBookMVC.Controllers
 {
@@ -30,6 +31,38 @@ namespace PhoneBookMVC.Controllers
         }
 
         public async Task<IActionResult> Index(string searchString)
+        {
+            IEnumerable<Person> people = await _personRepository.GetOAll();
+
+            var departmens = await _departmentRepository.GetOAll();
+
+            var searchPeople = from m in _context.People select m;
+
+            List<PeopleInTheDepartment> peopleInTheDepartments = new List<PeopleInTheDepartment>();
+            foreach (var n in departmens)
+            {
+                PeopleInTheDepartment departmentWhichPeople = new PeopleInTheDepartment();
+
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    departmentWhichPeople.People = people.Where(p => p.SecondName.Contains(searchString)).ToList();
+                }
+                else
+                {
+                    departmentWhichPeople.People = people.Where(p => p.DepartmentId == n.Id).ToList();
+                    departmentWhichPeople.DepartmentId = n.Id;
+                    departmentWhichPeople.Department = n;
+                }
+
+
+                peopleInTheDepartments.Add(departmentWhichPeople);
+            }
+
+            return View(peopleInTheDepartments);
+        }
+
+        
+        public async Task<IActionResult> IndexEdit(string searchString)
         {
             IEnumerable<Person> people = await _personRepository.GetOAll();
 
@@ -95,7 +128,7 @@ namespace PhoneBookMVC.Controllers
             {
                 _context.Add(person);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(IndexEdit));
             }
             return View(person);
 
@@ -111,72 +144,77 @@ namespace PhoneBookMVC.Controllers
             ViewBag.Departments = new SelectList(departmens, "Id", "Title");
             var positions = _context.Positions.ToList();
             ViewBag.Positions = new SelectList(positions, "Id", "Title");
-            
+            var phones = _context.Phones.ToList();
+
             var person = await _context.People.FindAsync(id);
-            
             if (person == null)
             {
                 return NotFound();
             }
+
             var personForUpdate =  _mapper.Map<PersonForUpdateDto>(person);
             
             return View(personForUpdate);
         }
 
-        //// POST: People/Edit/5
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //public async Task<IActionResult> Edit(int id, PersonForUpdateDto personForUpdateDto)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest("Некоректные данные");
-        //    }
-        //    var person = _mapper.Map<Person>(personForUpdateDto);
+        // POST: People/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, PersonForUpdateDto personForUpdateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Некоректные данные");
+            }
+            var person = _mapper.Map<Person>(personForUpdateDto);
+            var phone = await _context.Phones.SingleOrDefaultAsync(p => p.Id == personForUpdateDto.PhoneId);
 
-        //    var phone = await _context.Phones.SingleOrDefaultAsync(p => p.Id == personForUpdateDto.Id);
-        //    if(phone == null)
-        //    {
-        //        phone = new Phone
-        //        {
-        //            PhoneNumber = personForUpdateDto.phoneNumber
-        //        };
-        //        await _context.Phones.AddAsync(phone);
-        //        person.PhoneId = phone.Id;
-        //    }
-        //    if (id != person.Id)
-        //    {
-        //        return NotFound();
-        //    }
+            if (phone == null)
+            {
+                phone = new Phone
+                {
+                    PhoneNumber = personForUpdateDto.PhoneNumber
+                };
+                await _context.Phones.AddAsync(phone);
+                person.PhoneId = phone.Id;
+            }
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            _context.Update(person);
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            if (!PersonExists(person.Id))
-        //            {
-        //                return NotFound();
-        //            }
-        //            else
-        //            {
-        //                throw;
-        //            }
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(person);
-        //}
 
-        //private bool PersonExists(int id)
-        //    {
-        //        return _context.People.Any(e => e.Id == id);
-        //    }
+            
+
+            if (id != person.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(person);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!PersonExists(person.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(IndexEdit));
+            }
+            return View(person);
+        }
+
+        private bool PersonExists(int id)
+        {
+            return _context.People.Any(e => e.Id == id);
+        }
 
     }
     }

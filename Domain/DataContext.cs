@@ -18,7 +18,7 @@ namespace Domain
         public DbSet<Position> Positions { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Admin> UserAdmins { get; set; }
-        public object UserRoles { get; internal set; }
+        public DbSet<Admin> Admins { get; internal set; }
     }
 
 }
